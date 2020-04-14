@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  TableName:
+    Description: TableName
+    Type: String
+    AllowedPattern: '[a-zA-Z0-9]*'
+    MinLength: '1'
+    MaxLength: '2048'
+    ConstraintDescription: must contain only alphanumberic characters
+Resources: 
+  myDynamoDBTable: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Ref TableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: projectId
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes: 
+        - IndexName: projectIndex
+          KeySchema: 
+          - AttributeName: projectId
+            KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+Outputs:
+  DynamoDBTable:
+    Value: !Ref myDynamoDBTable
+    Description: Table name of the newly created DynamoDB table
