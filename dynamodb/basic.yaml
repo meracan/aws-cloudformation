@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  TableName:
+    Description: TableName
+    Type: String
+    MinLength: '1'
+    MaxLength: '2048'
+    
+Resources: 
+  myDynamoDBTable: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Ref TableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+Outputs:
+  DynamoDBTable:
+    Value: !Ref myDynamoDBTable
+    Description: Table name of the newly created DynamoDB table

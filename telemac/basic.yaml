@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  BucketTemplateName:
+    Description: BucketTemplateName
+    Type: String
+    MinLength: '1'
+    MaxLength: '2048'
+  BucketName:
+    Description: BucketName
+    Type: String
+    MinLength: '1'
+    MaxLength: '2048'
+    
+Resources:
+  myBucket:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://${BucketTemplateName}.s3.amazonaws.com/s3/basic.yaml"
+      Parameters:
+        BucketName: !Ref BucketName
+  TableCas:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://${BucketTemplateName}.s3.amazonaws.com/dynamodb/basicCas.yaml"
+      Parameters:
+        TableName: !Sub "${BucketName}-Cas"
+  TableData:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://${BucketTemplateName}.s3.amazonaws.com/dynamodb/basicData.yaml"
+      Parameters:
+        TableName: !Sub "${BucketName}-Data"
+
+Outputs:
+  Bucket:
+    Value: !Ref myBucket
+  TableCas:
+    Value: !Ref TableCas
+  TableData:
+    Value: !Ref TableData
