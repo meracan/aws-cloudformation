@@ -1,6 +1,28 @@
+# AWS Cloudformation for MERACAN
+Desc.
+
+## Installation
+
+An unique project Id `{Name}` needs to be created. The project Id is used as s3 bucket name.
+The code below creates a bucket for templates and copy all local templates from `aws-cloudformation` to the bucket. 
+This is necessary to perform [nested cloudformation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-nested-stacks.html) in aws.
+
+```bash
+
+git clone https://github.com/meracan/aws-cloudformation.git
+cd aws-cloudformation
+
+export AWS_PROJID=meracantest1
+aws cloudformation deploy --stack-name $AWS_PROJID-bucket --template-file s3/bucket.yaml --parameter-overrides BucketName=$AWS_PROJID
+aws s3 cp . s3://$AWS_PROJID/templates/ --recursive --exclude "*" --include "*.yaml"
+```
+
+### Telemac
+```bash
+aws cloudformation deploy --stack-name $AWS_PROJID-telemac --template-file telemac/simple.yaml --parameter-overrides BucketName=$AWS_PROJID
+```
 
 
-# DynamoDB cloudformation
 
 ## DynamoDB Testing
 ```bash

@@ -3,10 +3,9 @@ Parameters:
   TableName:
     Description: TableName
     Type: String
-    AllowedPattern: '[a-zA-Z0-9]*'
     MinLength: '1'
     MaxLength: '2048'
-    ConstraintDescription: must contain only alphanumberic characters
+    
   HashKeyElementName:
     Description: HashType PrimaryKey Name
     Type: String
