@@ -9,10 +9,7 @@ cp -r ../../../../s3-netcdf/s3netcdf .
 cp -r ../../../../binary-py/binarypy .
 
 pip install --no-deps -t . netcdf4 
-# rm -R ./numpy* # Don't need numpy since we are using a lambda layer
-# rm -R /bin # Don't need numpy since we are using a lambda layer
-# rm -R ./*dist-info
-
+rm -R ./*dist-info
 
 find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
 # zip -r ../$PACKAGE.zip *

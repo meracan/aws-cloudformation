@@ -158,7 +158,8 @@ Resources:
       Runtime: python3.8
       Timeout: 300
       Role: !GetAtt RoleApi.Arn
-      
+      Layers:
+        - arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:AWSLambda-Python38-SciPy1x:4
       Events:
         Root:
           Type: Api
