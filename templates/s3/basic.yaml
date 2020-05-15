@@ -3,10 +3,8 @@ Parameters:
   BucketName:
     Description: BucketName
     Type: String
-    AllowedPattern: '[a-zA-Z0-9]*'
     MinLength: '1'
     MaxLength: '2048'
-    ConstraintDescription: must contain only alphanumberic characters
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket

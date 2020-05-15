@@ -1,0 +1,155 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Parameters:
+  BucketName:
+    Type: String
+    Description: Name of Api role
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${AWS::StackName}-${BucketName}'
+
+  UserPool:
+    Type: 'AWS::Cognito::UserPool'
+    Properties:
+      UserPoolName: !Sub '${AWS::StackName}-Pool'
+  
+  UserPoolClient:
+    Type: 'AWS::Cognito::UserPoolClient'
+    Properties:
+      ClientName: !Sub '${AWS::StackName}-ClientName'
+      GenerateSecret: false
+      UserPoolId: !Ref UserPool
+
+  TableCas: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub '${AWS::StackName}-Cas'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: projectId
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes: 
+        - IndexName: projectIndex
+          KeySchema: 
+          - AttributeName: projectId
+            KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  TableData: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub '${AWS::StackName}-Data'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: projectId
+          AttributeType: S
+        - AttributeName: type
+          AttributeType: S          
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes: 
+        - IndexName: projectIndex
+          KeySchema: 
+          - AttributeName: projectId
+            KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: typeIndex
+          KeySchema: 
+          - AttributeName: type
+            KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  PolicyAdmin:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub '${AWS::StackName}-PolicyAdmin'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:PutObject'
+              - 's3:GetObject'
+              - 's3:DeleteObject'
+            Resource: 
+              - !GetAtt S3Bucket.Arn
+          - Effect: Allow
+            Action:
+              - 'dynamodb:PutItem'
+              - 'dynamodb:DeleteItem'
+              - 'dynamodb:GetItem'
+              - 'dynamodb:Scan'
+              - 'dynamodb:ListTagsOfResource'
+              - 'dynamodb:Query'
+              - 'dynamodb:UpdateItem'
+              - 'dynamodb:UpdateTable'
+            Resource:
+              - !GetAtt TableCas.Arn
+              - !GetAtt TableData.Arn
+          - Effect: Allow
+            Action:
+              - 'cognito-idp:*'
+            Resource: !GetAtt UserPool.Arn     
+  RoleAdmin:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub '${AWS::StackName}-RoleAdmin'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+        - !Ref PolicyAdmin
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action:
+          - 'sts:AssumeRole'
+          Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+            - ec2.amazonaws.com
+
+  GroupAdmin:
+    Type: 'AWS::Cognito::UserPoolGroup'
+    Properties:
+      Description: Admin group
+      GroupName: Admin
+      UserPoolId: !Ref UserPool
+      RoleArn: !GetAtt RoleAdmin.Arn
+  
+
+Outputs:
+  USERPOOLID:
+    Description: Cognito User Pool Id
+    Value: !Ref UserPool
+  USERPOOLCLIENTID:
+    Description: Cognito User Pool Client Id
+    Value: !Ref UserPoolClient
+  USERPOOLARN:
+    Description: Cognito User Pool Arn
+    Value: !GetAtt UserPool.Arn
+  S3BUCKET:
+    Description: Bucket
+    Value: !Ref S3Bucket
+  TABLECAS:
+    Description: Table
+    Value: !Ref TableCas
+  TABLEDATA:
+    Description: Table
+    Value: !Ref TableData  
+  ROLEADMINARN:
+    Description: Role Admin
+    Value: !GetAtt RoleAdmin.Arn

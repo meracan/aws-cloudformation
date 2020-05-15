@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Resources:
+  UserPool:
+    Type: 'AWS::Cognito::UserPool'
+    Properties:
+      UserPoolName: !Sub '${AWS::StackName}-Pool'
+  
+  UserPoolClient:
+    Type: 'AWS::Cognito::UserPoolClient'
+    Properties:
+      ClientName: !Sub '${AWS::StackName}-ClientName'
+      GenerateSecret: false
+      UserPoolId: !Ref UserPool

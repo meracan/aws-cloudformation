@@ -1,0 +1,73 @@
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:440480703237:stack/testmeracanapi3/effe5a70-8895-11ea-930f-0a7396047ff3", 
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }, 
+            "LastUpdatedTime": "2020-05-08T01:54:00.542Z", 
+            "Parameters": [
+                {
+                    "ParameterValue": "bucket", 
+                    "ParameterKey": "BucketName"
+                }
+            ], 
+            "Tags": [], 
+            "Outputs": [
+                {
+                    "Description": "Table", 
+                    "OutputKey": "TABLEDATA", 
+                    "OutputValue": "testmeracanapi3-Data"
+                }, 
+                {
+                    "Description": "Table", 
+                    "OutputKey": "TABLECAS", 
+                    "OutputValue": "testmeracanapi3-Cas"
+                }, 
+                {
+                    "Description": "Cognito User Pool Client Id", 
+                    "OutputKey": "USERPOOLCLIENTID", 
+                    "OutputValue": "2bcuue7dog2sgcr92i7h279mve"
+                }, 
+                {
+                    "Description": "Cognito User Pool Id", 
+                    "OutputKey": "USERPOOLID", 
+                    "OutputValue": "us-east-1_HS3EVtNaT"
+                }, 
+                {
+                    "Description": "Bucket", 
+                    "OutputKey": "S3BUCKET", 
+                    "OutputValue": "testmeracanapi3-bucket"
+                }, 
+                {
+                    "Description": "API Prod stage endpoint", 
+                    "OutputKey": "AWSAPI", 
+                    "OutputValue": "https://n8672clwfl.execute-api.us-east-1.amazonaws.com/Prod/"
+                }, 
+                {
+                    "Description": "Role Admin", 
+                    "OutputKey": "ROLEADMINARN", 
+                    "OutputValue": "arn:aws:iam::440480703237:role/testmeracanapi3-RoleAdmin"
+                }, 
+                {
+                    "Description": "Cognito User Pool Arn", 
+                    "OutputKey": "USERPOOLARN", 
+                    "OutputValue": "arn:aws:cognito-idp:us-east-1:440480703237:userpool/us-east-1_HS3EVtNaT"
+                }
+            ], 
+            "EnableTerminationProtection": false, 
+            "CreationTime": "2020-04-27T14:46:54.660Z", 
+            "Capabilities": [
+                "CAPABILITY_IAM", 
+                "CAPABILITY_NAMED_IAM", 
+                "CAPABILITY_AUTO_EXPAND"
+            ], 
+            "StackName": "testmeracanapi3", 
+            "NotificationARNs": [], 
+            "StackStatus": "UPDATE_COMPLETE", 
+            "DisableRollback": false, 
+            "ChangeSetId": "arn:aws:cloudformation:us-east-1:440480703237:changeSet/awscli-cloudformation-package-deploy-1588902829/a69b5d4e-e936-40d0-9b52-ef2c82fbb6af", 
+            "RollbackConfiguration": {}
+        }
+    ]
+}

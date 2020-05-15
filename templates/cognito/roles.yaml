@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Parameters:
+  RoleApiName:
+    Default: RoleApi
+    Type: String
+    Description: Name of Api role
+    
+Resources:
+  PolicyAdmin:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub '${AWS::StackName}-PolicyAdmin'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:PutObject'
+              - 's3:GetObject'
+              - 's3:DeleteObject'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'dynamodb:PutItem'
+              - 'dynamodb:DeleteItem'
+              - 'dynamodb:GetItem'
+              - 'dynamodb:Scan'
+              - 'dynamodb:ListTagsOfResource'
+              - 'dynamodb:Query'
+              - 'dynamodb:UpdateItem'
+              - 'dynamodb:UpdateTable'
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - 'cognito-idp:*'
+            Resource: "*"     
+  RoleAdmin:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub '${AWS::StackName}-RoleAdmin'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+        - !Ref PolicyAdmin      
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action:
+          - 'sts:AssumeRole'
+          Effect: Allow
+          Principal:
+            AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-${RoleApiName}'
+            Service:
+            - lambda.amazonaws.com
+  UserPool:
+    Type: 'AWS::Cognito::UserPool'
+    Properties:
+      UserPoolName: !Sub '${AWS::StackName}-Pool'
+  
+  UserPoolClient:
+    Type: 'AWS::Cognito::UserPoolClient'
+    Properties:
+      ClientName: !Sub '${AWS::StackName}-ClientName'
+      GenerateSecret: false
+      UserPoolId:
+        Ref: UserPool
+  GroupAdmin:
+    Type: 'AWS::Cognito::UserPoolGroup'
+    Properties:
+      Description: Admin group
+      GroupName: Admin
+      UserPoolId:
+        Ref: UserPool
+      RoleArn: !GetAtt RoleAdmin.Arn
+     
+    
+Outputs:
+  AWSUSERPOOLID:
+    Description: Cognito User Pool Id
+    Value: !Ref UserPool
+  AWSUSERPOOLCLIENTID:
+    Description: Cognito User Pool Client Id
+    Value: !Ref UserPoolClient
+  AWSUSERPOOLARN:
+    Description: Cognito User Pool Arn
+    Value: !GetAtt UserPool.Arn
